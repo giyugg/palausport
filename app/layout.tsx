@@ -1,23 +1,53 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
+import localFont from "next/font/local";
+import { SiteHeader } from "@/components/site/site-header";
+import { SiteFooter } from "@/components/site/site-footer";
+import { launchApproved, site, siteUrl } from "@/content/site";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const lora = localFont({
+  src: "../public/fonts/lora/lora-variable.ttf",
+  variable: "--font-heading",
+  display: "swap",
+  weight: "400 700",
+});
+const dmSans = localFont({
+  src: "../public/fonts/dm-sans/dm-sans-variable.ttf",
+  variable: "--font-body",
+  display: "swap",
+  weight: "100 1000",
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "M/Y Palau Sport | Philippine Liveaboard Diving",
+    template: "%s | M/Y Palau Sport",
+  },
+  description: site.description,
+  robots: { index: launchApproved, follow: launchApproved },
+  openGraph: {
+    type: "website",
+    locale: "en_PH",
+    siteName: site.name,
+    title: "M/Y Palau Sport | Philippine Liveaboard Diving",
+    description: site.description,
+    images: [
+      {
+        url: "/images/tubbataha-reef-diver.webp",
+        width: 1920,
+        height: 1280,
+        alt: "A diver exploring Tubbataha Reef, Philippines. Photo: Anna Varona, CC BY 4.0.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "M/Y Palau Sport",
+    description: site.description,
+    images: ["/images/tubbataha-reef-diver.webp"],
+  },
 };
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
-  subsets: ["latin"],
-});
 
 export default function RootLayout({
   children,
@@ -25,16 +55,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+    <html lang="en" data-scroll-behavior="smooth">
+      <body id="top" className={`${lora.variable} ${dmSans.variable}`}>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
       </body>
     </html>
   );
